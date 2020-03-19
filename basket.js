@@ -62,49 +62,23 @@ const categoryPrice = [
 
 
 let cart = {
+    currency: 'RUR',
     amount: 0,  //итоговая стоимость
     products: [] //продукты
 };
 
-//добавление товара в корзину
-function addProducts(id) {
-    const index = cart.products.findIndex(element => element.id === id); // есть ли такой продукт в корзине или нет?
-    if (index === -1) {
-        const productInCatalog = catalog.find(element => element.id === id);
-        const price = categoryPriceFindElement(productInCatalog.category);
-        const product = {
-            id: id,
-            name: productInCatalog.name,
-            category: productInCatalog.category,
-            image: productInCatalog.image,
-            price: price.price,
-            currency: price.currency,
-            quantity: 1
-        };
-        cart.products.push(product);
-    } else {
-        cart.products[index].quantity++;
-    }
-    sum();
-    renderCart();
-}
-
-function sum() {
-    cart.amount = cart.products.reduce((accumulator, currentValue) => accumulator + currentValue.price * currentValue.quantity, 0);
-}
-
-function createProduct(product) {
-    let div = document.createElement('div');   //создаем div
+function createProductCard(product) {
+    let div = create('div');   //создаем div
     div.classList.add('products');
-    let img = document.createElement('div');
+    let img = create('div');
     img.classList.add('img');
     img.style.backgroundImage = `url(img/${product.image}.jpeg)`;
-    let name = document.createElement('p');    //создаем p название товара
+    let name = create('p');    //создаем p название товара
     name.innerText = product['name'];
-    let button = document.createElement('button');  //создаем кнопку Добавить
-    button.innerText = 'Добавить';                           //записываем в кнопку текст
-    button.setAttribute('onclick', `addProducts(${product.id})`);  //даем кнопки атрибут
-    let price = document.createElement('p');
+    let button = create('button');  //создаем кнопку Добавить
+    button.innerText = 'Добавить';
+    button.id = `add-${product.id}`;//записываем в кнопку текст
+    let price = create('p');
     price.innerText = replacePrice(categoryPriceFindElement(product['category']));
     div.append(img);
     div.append(name);
@@ -113,7 +87,7 @@ function createProduct(product) {
     return div;
 }
 
-function createProductInBasket(product) {
+function createProductInBasketCard(product) {
     let basketProducts = create('div');
     basketProducts.classList.add('basket-products');
     let img = create('div');
@@ -151,10 +125,6 @@ function createProductInBasket(product) {
     return basketProducts;
 }
 
-function create(tag) {
-    return document.createElement(tag);
-}
-
 function categoryPriceFindElement(category) {
     return categoryPrice.find(element => element.category === category);
 }
@@ -168,62 +138,109 @@ function replacePrice(element) {
     }
 }
 
+function create(tag) {
+    return document.createElement(tag);
+}
+
 function renderProducts() {
     let div = document.querySelector('.catalog');
     catalog.forEach(element => {
-        div.append(createProduct(element))
+        div.append(createProductCard(element))
     });
 }
 
 function renderCart() {
+    cart.amount = cart.products.reduce((accumulator, currentValue) => accumulator + currentValue.price * currentValue.quantity, 0);
+
     let div = document.querySelector('.cart');
+
     if (document.querySelector('.price') !== null) {
-        document.querySelector('.price').innerText = `Цена: ${cart.amount} руб.`;
+        document.querySelector('.price').innerText = `Цена: ${replacePrice({price: cart.amount, currency: cart.currency})}`;
     } else {
-        let price = document.createElement('p');
+        let price = create('p');
         price.classList.add('price');
-        price.innerText = `Цена: ${cart.amount} руб.`;
+        price.innerText = `Цена: ${replacePrice({price: cart.amount, currency: cart.currency})}`;
         div.append(price);
     }
-    let b = document.querySelector('.cart-products');
-    if (b.children.length > 0) {
-        b.innerHTML = '';
+
+    let cartProducts = document.querySelector('.cart-products');
+
+    if (cartProducts.children.length > 0) {
+        cartProducts.innerHTML = '';
     }
-    cart.products.forEach(element => b.append(createProductInBasket(element)));
+
+    cart.products.forEach(element => cartProducts.append(createProductInBasketCard(element)));
 }
 
-renderCart();
-
-renderProducts();
-
-document.addEventListener('click', (e) => {
-    if (e.target['id'] !== undefined) {
-        const arr = e.target['id'].split('-');
-        const obj = {
-            value: arr[0],
-            id: +arr[1]
+function addProduct(id) {
+    const index = cart.products.findIndex(element => element.id === id); // есть ли такой продукт в корзине или нет?
+    if (index === -1) {
+        const productInCatalog = catalog.find(element => element.id === id);
+        const price = categoryPriceFindElement(productInCatalog.category);
+        const product = {
+            id: id,
+            name: productInCatalog.name,
+            category: productInCatalog.category,
+            image: productInCatalog.image,
+            price: price.price,
+            currency: price.currency,
+            quantity: 1
         };
-        switch (obj.value) {
-            case 'plus':
-                let plus = cart.products.find(element => element.id === obj.id);
-                plus.quantity++;
-                sum();
-                renderCart();
-                break;
-            case 'minus':
-                let minus = cart.products.find(element => element.id === obj.id);
-                if (minus.quantity !== 1) {
-                    minus.quantity--;
-                    sum();
-                    renderCart();
-                }
-                break;
-            case 'delete':
-                let index = cart.products.findIndex(element => element.id === obj.id);
-                cart.products.splice(index, 1);
-                sum();
-                renderCart();
-                break;
-        }
+        cart.products.push(product);
+    } else {
+        cart.products[index].quantity++;
     }
-});
+    renderCart();
+}
+
+function deleteProduct(id) {
+    const index = cart.products.findIndex(element => element.id === id);
+    cart.products.splice(index, 1);
+    renderCart();
+}
+
+function minusProduct(id) {
+    let product = cart.products.find(element => element.id === id);
+    if (product.quantity !== 1) {
+        product.quantity--;
+        renderCart();
+    }
+}
+
+function plusProduct(id) {
+    let product = cart.products.find(element => element.id === id);
+    product.quantity++;
+    renderCart();
+}
+
+function run() {
+    renderCart();
+    renderProducts();
+    document.addEventListener('click', (e) => {
+        if (e.target['id'] !== undefined) {
+            const arr = e.target['id'].split('-');
+            const obj = {
+                value: arr[0],
+                id: +arr[1]
+            };
+
+            switch (obj.value) {
+                case 'plus':
+                    plusProduct(obj.id);
+                    break;
+                case 'minus':
+                    minusProduct(obj.id);
+                    break;
+                case 'delete':
+                    deleteProduct(obj.id);
+                    break;
+                case 'add':
+                    addProduct(obj.id);
+                    break;
+            }
+
+        }
+    });
+}
+
+run();
