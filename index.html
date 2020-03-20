@@ -1,33 +1,119 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Корзина</title>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Shop</title>
     <style>
+
+        @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin:     0;
+            padding:    0;
+        }
+
+        body {
+            font-family:       'Roboto', sans-serif;
+            background:        #e3e3e3;
+
+            --card-size:       300px;
+            --main-background: #ffffff;
+            --main-color: #6bb247;
+        }
+
+        button {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        #app {
+            max-width:  1024px;
+            min-height: 100vh;
+            background: var(--main-background);
+            margin:     0 auto;
+        }
+
+        .header {
+            height:           70px;
+            box-shadow:       0 8px 8px 0 rgba(225, 225, 225, 1);
+            background-color: var(--main-color);
+        }
+
         .catalog {
-            display: flex;
-            justify-content: space-around;
+            display:               grid;
+            grid-template-columns: repeat(auto-fill, minmax(var(--card-size), 1fr));
+            grid-gap:              20px 20px;
+            padding:           20px 0;
         }
 
         .products {
-            width: 200px;
+            width:        var(--card-size);
+            justify-self: center;
+            align-self:   flex-start;
+            display: grid;
+            grid-template-rows: var(--card-size) 70px 30px;
+            grid-template-columns: repeat(2, 1fr);
+            grid-row-gap: 10px;
+            grid-template-areas: 'img img'
+                                 'name name'
+                                 'price button';
         }
-        .img {
-            width: 200px;
-            height: 200px;
-            background-size: cover;
-            background-repeat: no-repeat;
+
+        .card-img {
+            width:               var(--card-size);
+            height:              var(--card-size);
+            background-size:     cover;
+            background-repeat:   no-repeat;
             background-position: center;
+            grid-area: img;
         }
+
+        .card-name {
+            grid-area: name;
+            border-bottom: 1px solid rgba(225, 225, 225, .5);
+        }
+
+        .card-price {
+            grid-area: price;
+            color: rgba(225, 225, 225, 1);
+            font-size: .8rem;
+            align-self: center;
+        }
+
+        .card-price > span {
+            font-size: 1.3rem;
+            color: var(--main-color);
+            font-weight: bold;
+        }
+
+        .card-button {
+            grid-area: button;
+            height: 30px;
+            background: var(--main-color);
+            color: #ffffff;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
     </style>
 </head>
 <body>
 <div id="app">
-    <div class="catalog">
+    <div class="header">
+        <button class="cart-button">Корзина</button>
     </div>
-    <div class="cart">
-        <div class="cart-products">
-        </div>
+    <div class="catalog"></div>
+    <div class="cart hidden">
+        <div class="cart-products"></div>
     </div>
 </div>
 <script src="main.js" type="module"></script>
