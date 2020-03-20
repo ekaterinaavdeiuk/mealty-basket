@@ -10,15 +10,18 @@ function createProductCard(product) {
     let div = create('div');   //создаем div
     div.classList.add('products');
     let img = create('div');
-    img.classList.add('img');
+    img.classList.add('card-img');
     img.style.backgroundImage = `url(img/${product.image}.jpeg)`;
     let name = create('p');    //создаем p название товара
     name.innerText = product['name'];
+    name.classList.add('card-name');
     let button = create('button');  //создаем кнопку Добавить
-    button.innerText = 'Добавить';
+    button.innerText = 'В корзину';
     button.id = `add-${product.id}`;//записываем в кнопку текст
+    button.classList.add('card-button');
     let price = create('p');
-    price.innerText = replacePrice(categoryPriceFindElement(product['category']));
+    price.insertAdjacentHTML('afterbegin', replacePrice(categoryPriceFindElement(product['category']), true));
+    price.classList.add('card-price');
     div.append(img);
     div.append(name);
     div.append(price);
@@ -68,12 +71,12 @@ function categoryPriceFindElement(category) {
     return categoryPrice.find(element => element.category === category);
 }
 
-function replacePrice(element) {
+function replacePrice(element, html = false) {
     switch (element.currency) {
         case 'RUR':
-            return `${element.price} руб.`;
+            return html ? `<span>${element.price}</span> руб.` : `${element.price} руб.`;
         case 'USD':
-            return `${element.price} долл.`;
+            return html ? `<span>${element.price}</span> руб.` : `${element.price} руб.`;
     }
 }
 
