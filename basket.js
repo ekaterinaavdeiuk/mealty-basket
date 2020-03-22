@@ -13,11 +13,11 @@ const replacePrice = (element, html = false) =>
     html ? `<span>${element.price}</span> руб` : `${element.price} руб`;
 
 const createProductCard = product => {
-    let div = document.createElement('div');
-    let img = document.createElement('div');
-    let name = document.createElement('p');
-    let price = document.createElement('p');
-    let button = document.createElement('button');
+    let div = document.createElement('div'),
+        img = document.createElement('div'),
+        name = document.createElement('p'),
+        price = document.createElement('p'),
+        button = document.createElement('button');
 
     div.classList.add('products');
     img.classList.add('card-img');
@@ -30,10 +30,7 @@ const createProductCard = product => {
     button.id = `add-${product.id}`;
     button.classList.add('card-button');
 
-    div.append(img);
-    div.append(name);
-    div.append(price);
-    div.append(button);
+    div.append(...[img, name, price, button]);
 
     return div;
 };
@@ -45,18 +42,18 @@ const renderProducts = () => {
 };
 
 const createProductInBasketCard = product => {
-    let productCard = document.createElement('div');
-    let img = document.createElement('div');
-    let nameQuantity = document.createElement('div');
-    let name = document.createElement('p');
-    let buttons = document.createElement('div');
-    let buttonPlus = document.createElement('button');
-    let quantity = document.createElement('div');
-    let buttonMinus = document.createElement('button');
-    let deleteProduct = document.createElement('button');
+    let productCard = document.createElement('div'),
+        img = document.createElement('div'),
+        nameQuantity = document.createElement('div'),
+        name = document.createElement('p'),
+        buttons = document.createElement('div'),
+        buttonPlus = document.createElement('button'),
+        quantity = document.createElement('div'),
+        buttonMinus = document.createElement('button'),
+        deleteProduct = document.createElement('button');
 
     productCard.classList.add('basket-products');
-    img.classList.add('img', 'img-small');
+    img.classList.add('cart-img');
     img.style.backgroundImage = `url(img/${product.image}.jpeg)`;
     nameQuantity.classList.add('name-quantity');
     name.innerText = product['name'];
@@ -73,14 +70,9 @@ const createProductInBasketCard = product => {
     deleteProduct.innerText = 'x';
     deleteProduct.id = `delete-${product.id}`;
 
-    buttons.append(buttonPlus);
-    buttons.append(quantity);
-    buttons.append(buttonMinus);
-    nameQuantity.append(name);
-    nameQuantity.append(buttons);
-    productCard.append(img);
-    productCard.append(nameQuantity);
-    productCard.append(deleteProduct);
+    buttons.append(...[buttonPlus, quantity, buttonMinus]);
+    nameQuantity.append(...[name, buttons]);
+    productCard.append(...[img, nameQuantity, deleteProduct]);
 
     return productCard;
 };
