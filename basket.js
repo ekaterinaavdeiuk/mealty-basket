@@ -103,7 +103,7 @@ const createProductInBasketCard = product => {
     deleteProduct.classList.add('delete');
     deleteProduct.id = `delete-${product.id}`;
 
-    buttons.append(...[buttonPlus, quantity, buttonMinus]);
+    buttons.append(...[buttonMinus, quantity, buttonPlus]);
     nameQuantity.append(...[name, buttons]);
     productCard.append(...[deleteProduct, img, nameQuantity]);
 
