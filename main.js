@@ -1,7 +1,9 @@
 import { basket } from './basket.js';
-import { sliderRend } from './slider.js';
-import {button} from './slider.js';
+import { slider } from './slider.js';
 
-basket();
-sliderRend();
-button();
+const run = () => {
+    slider();
+    basket();
+};
+
+run();

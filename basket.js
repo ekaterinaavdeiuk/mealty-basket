@@ -1,108 +1,94 @@
 import { catalog, categoryPrice } from './db.js'
 
-let cart = {
+const cart = {
     currency: 'RUR',
-    amount: 0,  //итоговая стоимость
-    products: [] //продукты
+    amount: 0,
+    products: []
 };
 
-function createProductCard(product) {
-    let div = create('div');   //создаем div
+const categoryPriceFindElement = category =>
+    categoryPrice.find(element => element.category === category);
+
+const replacePrice = (element, html = false) =>
+    html ? `<span>${element.price}</span> руб` : `${element.price} руб`;
+
+const createProductCard = product => {
+    let div = document.createElement('div'),
+        img = document.createElement('div'),
+        name = document.createElement('p'),
+        price = document.createElement('p'),
+        button = document.createElement('button');
+
     div.classList.add('products');
-    let img = create('div');
     img.classList.add('card-img');
     img.style.backgroundImage = `url(img/${product.image}.jpeg)`;
-    let name = create('p');    //создаем p название товара
     name.innerText = product['name'];
     name.classList.add('card-name');
-    let button = create('button');  //создаем кнопку Добавить
-    button.innerText = 'В корзину';
-    button.id = `add-${product.id}`;//записываем в кнопку текст
-    button.classList.add('card-button');
-    let price = create('p');
     price.insertAdjacentHTML('afterbegin', replacePrice(categoryPriceFindElement(product['category']), true));
     price.classList.add('card-price');
-    div.append(img);
-    div.append(name);
-    div.append(price);
-    div.append(button);
-    return div;
-}
+    button.innerText = 'В корзину';
+    button.id = `add-${product.id}`;
+    button.classList.add('card-button');
 
-function createProductInBasketCard(product) {
-    let basketProducts = create('div');
-    basketProducts.classList.add('basket-products');
-    let img = create('div');
-    img.classList.add('img', 'img-small');
+    div.append(...[img, name, price, button]);
+
+    return div;
+};
+
+const renderProducts = () => {
+    document.querySelector('.catalog').append(
+        ...catalog.map(element => createProductCard(element))
+    );
+};
+
+const createProductInBasketCard = product => {
+    let productCard = document.createElement('div'),
+        img = document.createElement('div'),
+        nameQuantity = document.createElement('div'),
+        name = document.createElement('p'),
+        buttons = document.createElement('div'),
+        buttonPlus = document.createElement('button'),
+        quantity = document.createElement('div'),
+        buttonMinus = document.createElement('button'),
+        deleteProduct = document.createElement('button');
+
+    productCard.classList.add('basket-products');
+    img.classList.add('cart-img');
     img.style.backgroundImage = `url(img/${product.image}.jpeg)`;
-    let nameQuantity = create('div');
     nameQuantity.classList.add('name-quantity');
-    let name = create('p');
     name.innerText = product['name'];
-    let buttons = create('div');
     buttons.classList.add('buttons');
-    let buttonPlus = create('button');
     buttonPlus.classList.add('button-plus');
     buttonPlus.id = `plus-${product.id}`;
     buttonPlus.innerText = '+';
-    let quantity = create('div');
     quantity.classList.add('quantity');
     quantity.innerText = product['quantity'];
-    let buttonMinus = create('button');
     buttonMinus.classList.add('button-minus');
     buttonMinus.innerText = '-';
     buttonMinus.id = `minus-${product.id}`;
-    let deleteProduct = create('button');
     deleteProduct.classList.add('delete');
     deleteProduct.innerText = 'x';
     deleteProduct.id = `delete-${product.id}`;
-    buttons.append(buttonPlus);
-    buttons.append(quantity);
-    buttons.append(buttonMinus);
-    nameQuantity.append(name);
-    nameQuantity.append(buttons);
-    basketProducts.append(img);
-    basketProducts.append(nameQuantity);
-    basketProducts.append(deleteProduct);
-    return basketProducts;
-}
 
-function categoryPriceFindElement(category) {
-    return categoryPrice.find(element => element.category === category);
-}
+    buttons.append(...[buttonPlus, quantity, buttonMinus]);
+    nameQuantity.append(...[name, buttons]);
+    productCard.append(...[img, nameQuantity, deleteProduct]);
 
-function replacePrice(element, html = false) {
-    switch (element.currency) {
-        case 'RUR':
-            return html ? `<span>${element.price}</span> руб.` : `${element.price} руб.`;
-        case 'USD':
-            return html ? `<span>${element.price}</span> руб.` : `${element.price} руб.`;
-    }
-}
+    return productCard;
+};
 
-function create(tag) {
-    return document.createElement(tag);
-}
+const renderCart = () => {
+    cart.amount = cart.products.reduce((accumulator, currentValue) =>
+        accumulator + currentValue.price * currentValue.quantity, 0);
 
-function renderProducts() {
-    let div = document.querySelector('.catalog');
-    catalog.forEach(element => {
-        div.append(createProductCard(element))
-    });
-}
-
-function renderCart() {
-    cart.amount = cart.products.reduce((accumulator, currentValue) => accumulator + currentValue.price * currentValue.quantity, 0);
-
-    let div = document.querySelector('.cart');
-
-    if (document.querySelector('.price') !== null) {
-        document.querySelector('.price').innerText = `Цена: ${replacePrice({price: cart.amount, currency: cart.currency})}`;
+    let price = document.querySelector('.price');
+    if (price !== null) {
+        price.innerText = `Итого: ${replacePrice({price: cart.amount, currency: cart.currency})}`;
     } else {
-        let price = create('p');
-        price.classList.add('price');
-        price.innerText = `Цена: ${replacePrice({price: cart.amount, currency: cart.currency})}`;
-        div.append(price);
+        let tag = document.createElement('p');
+        tag.classList.add('price');
+        tag.innerText = `Итого: ${replacePrice({price: cart.amount, currency: cart.currency})}`;
+        document.querySelector('.cart').append(tag);
     }
 
     let cartProducts = document.querySelector('.cart-products');
@@ -112,9 +98,9 @@ function renderCart() {
     }
 
     cart.products.forEach(element => cartProducts.append(createProductInBasketCard(element)));
-}
+};
 
-function addProduct(id) {
+const addProduct = (id) => {
     const index = cart.products.findIndex(element => element.id === id); // есть ли такой продукт в корзине или нет?
     if (index === -1) {
         const productInCatalog = catalog.find(element => element.id === id);
@@ -133,31 +119,29 @@ function addProduct(id) {
         cart.products[index].quantity++;
     }
     renderCart();
-}
+};
 
-function deleteProduct(id) {
+const deleteProduct = (id) => {
     const index = cart.products.findIndex(element => element.id === id);
     cart.products.splice(index, 1);
     renderCart();
-}
+};
 
-function minusProduct(id) {
+const minusProduct = (id) => {
     let product = cart.products.find(element => element.id === id);
     if (product.quantity !== 1) {
         product.quantity--;
         renderCart();
     }
-}
+};
 
-function plusProduct(id) {
+const plusProduct = (id) => {
     let product = cart.products.find(element => element.id === id);
     product.quantity++;
     renderCart();
-}
+};
 
-function run() {
-    renderCart();
-    renderProducts();
+const eventListener = () => {
     document.addEventListener('click', (e) => {
         if (e.target['id'] !== undefined) {
             const arr = e.target['id'].split('-');
@@ -179,10 +163,18 @@ function run() {
                 case 'add':
                     addProduct(obj.id);
                     break;
+                case 'slider':
+                    console.log(obj.id);
+                    break;
             }
-
         }
     });
-}
+};
+
+const run = () => {
+    renderCart();
+    renderProducts();
+    eventListener();
+};
 
 export { run as basket }

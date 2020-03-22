@@ -44,6 +44,29 @@
             background-color: var(--main-color);
         }
 
+        .slider {
+            position: relative;
+            height: var(--card-size);
+            overflow: hidden;
+        }
+
+        .slider-img {
+            position: absolute;
+            height: var(--card-size);
+            width: 100%;
+            opacity: 1;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            transition: opacity .5s;
+            z-index: 2;
+        }
+
+        .hidden-slider-img {
+            opacity: 0;
+            z-index: 1;
+        }
+
         .catalog {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(var(--card-size), 1fr));
@@ -78,7 +101,7 @@
 
         .card-price {
             grid-area: price;
-            color: rgba(225, 225, 225, 1);
+            color: rgba(200, 200, 200, 1);
             font-size: .8rem;
             align-self: center;
         }
@@ -98,34 +121,17 @@
             font-size: 1.1rem;
         }
 
+        .cart-img {
+            height: 50px;
+            width: 50px;
+            border-radius: 5px;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
         .hidden {
             display: none;
-        }
-
-        .slider {
-            position: relative;
-            margin-top: 100px;
-            margin-left: 200px;
-        }
-
-        .opacity0 {
-            opacity: 0;
-        }
-
-        .slider-img {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-            transition: all ease 1s;
-        }
-
-        .button-slider {
-            width: 150px;
-            height: 50px;
-            background: red;
         }
     </style>
 </head>
@@ -134,11 +140,11 @@
     <div class="header">
         <button class="cart-button">Корзина</button>
     </div>
+    <div class="slider"></div>
     <div class="catalog"></div>
-    <div class="cart hidden">
+    <div class="cart">
         <div class="cart-products"></div>
     </div>
-    <div class="slider"></div>
 </div>
 <script src="main.js" type="module"></script>
 </body>
