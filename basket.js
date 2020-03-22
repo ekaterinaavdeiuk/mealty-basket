@@ -18,7 +18,7 @@ const loadFromLocalStorage = () => {
 
 const createCart = () => {
    let lS =  loadFromLocalStorage();
-    if(lS.hasOwnProperty('products') && lS.products.length > 0) {
+    if(lS !== undefined) {
         cart = lS;
     }
 };
