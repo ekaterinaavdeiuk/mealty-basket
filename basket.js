@@ -96,19 +96,16 @@ const createProductInBasketCard = product => {
     buttons.classList.add('buttons');
     buttonPlus.classList.add('button-plus');
     buttonPlus.id = `plus-${product.id}`;
-    buttonPlus.innerText = '+';
     quantity.classList.add('quantity');
     quantity.innerText = product['quantity'];
     buttonMinus.classList.add('button-minus');
-    buttonMinus.innerText = '-';
     buttonMinus.id = `minus-${product.id}`;
     deleteProduct.classList.add('delete');
-    deleteProduct.innerText = 'x';
     deleteProduct.id = `delete-${product.id}`;
 
     buttons.append(...[buttonPlus, quantity, buttonMinus]);
     nameQuantity.append(...[name, buttons]);
-    productCard.append(...[img, nameQuantity, deleteProduct]);
+    productCard.append(...[deleteProduct, img, nameQuantity]);
 
     return productCard;
 };
