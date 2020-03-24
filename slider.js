@@ -100,7 +100,7 @@ function run() {
     const slides = document.querySelectorAll('.slider-img');
     const index = {current: 0, previous: slides.length - 1};
     changeSlide(slides, index);
-    setInterval(() => {changeSlide(slides, index)}, 5000);
+    setInterval(() => {changeSlide(slides, index)}, 3000);
 }
 
 export {run as slider}

@@ -127,7 +127,11 @@ const renderCart = () => {
         let tag = document.createElement('p');
         tag.classList.add('price');
         tag.innerText = `Итого: ${replacePrice({price: cart.amount, currency: cart.currency})}`;
+        let orderButton = document.createElement('button');
+        orderButton.classList.add('order-button');
+        orderButton.innerText = 'Оформить заказ';
         document.querySelector('.modal-window').append(tag);
+        document.querySelector('.modal-window').append(orderButton);
     }
 
     let cartProducts = document.querySelector('.cart-products');

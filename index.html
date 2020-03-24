@@ -238,11 +238,10 @@
             top: calc(100% / 2 - 250px);
             left: calc(100% / 2 - 512px);
             width: 1024px;
-            height: 500px;
+            height: 700px;
             z-index: 4;
             background: #ffffff;
-            padding: 40px;
-            border-radius: 10px;
+            padding: 30px 30px 120px 30px;
         }
 
         .cart {
@@ -254,9 +253,11 @@
         .hidden {
             display: none;
         }
+
         .count-cart-button {
             position: relative;
         }
+
         .count-wrapper {
             display: flex;
             justify-content: center;
@@ -271,17 +272,39 @@
             border-radius: 50%;
         }
 
+        .cart-amount {
+            color: #ffffff;
+        }
+
         .count {
             font-size: .8rem;
+            color: var(--main-color);
         }
+        .order-button {
+            height: 30px;
+            width: 200px;
+            background: var(--main-color);
+            color: #ffffff;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            margin-top: 30px;
+        }
+        ::-webkit-scrollbar { width: 3px; height: 3px;}
+        ::-webkit-scrollbar-track {  background-color:  var(--main-color);}
+        ::-webkit-scrollbar-track-piece { background-color: #ffffff;}
+        ::-webkit-scrollbar-thumb { height: 30px; background-color:  var(--main-color); border-radius: 3px;}
+        ::-webkit-scrollbar-corner { background-color: #999;}
+        ::-webkit-resizer { background-color:  var(--main-color);}
     </style>
 </head>
 <body>
 <div id="app" class="day-theme">
     <div class="header">
-        <div class="cart-amount">0 руб</div>
+        <div class="cart-amount"></div>
         <div class="count-cart-button">
-            <div class="count-wrapper"><div class="count">0</div></div>
+            <div class="count-wrapper">
+                <div class="count"></div>
+            </div>
             <button id="open" class="cart-button"></button>
         </div>
 
@@ -294,8 +317,7 @@
     <div class="modal-window hidden">
         <div class="cart">
             <div class="cart-products"></div>
-        </div>
-            <button>Оформить заказ</button>
+        </div >
     </div>
 </div>
 <script src="main.js" type="module"></script>
