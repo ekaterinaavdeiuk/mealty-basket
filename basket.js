@@ -23,7 +23,6 @@ const createCart = () => {
     }
 };
 
-createCart();
 const categoryPriceFindElement = category =>
     categoryPrice.find(element => element.category === category);
 
@@ -44,12 +43,16 @@ const createProductCard = product => {
     name.classList.add('card-name');
     price.insertAdjacentHTML('afterbegin', replacePrice(categoryPriceFindElement(product['category']), true));
     price.classList.add('card-price');
-    button.innerText = 'В корзину';
-    button.id = `add-${product.id}`;
     button.classList.add('card-button');
-    button.innerText = 'В корзину';
-    button.id = `add-${product.id}`;
 
+
+    if(cart.products.findIndex(element => element.id === product.id) === -1) {
+        button.innerText = 'В корзину';
+        button.id = `add-${product.id}`;
+    } else {
+        button.innerText = 'Удалить';
+        button.id = `delete-${product.id}`;
+    }
 
     div.append(...[img, name, price, button]);
 
@@ -69,7 +72,6 @@ const renameButton = (id, action) => {
             break;
     }
 };
-
 
 const renderProducts = () => {
     document.querySelector('.catalog').append(
@@ -101,7 +103,7 @@ const createProductInBasketCard = product => {
     buttonMinus.classList.add('button-minus');
     buttonMinus.id = `minus-${product.id}`;
     deleteProduct.classList.add('delete');
-    deleteProduct.id = `delete-${product.id}`;
+    deleteProduct.id = `deleteFromBasket-${product.id}`;
 
     buttons.append(...[buttonMinus, quantity, buttonPlus]);
     nameQuantity.append(...[name, buttons]);
@@ -109,6 +111,10 @@ const createProductInBasketCard = product => {
 
     return productCard;
 };
+
+const getProductQuantity = () =>
+    cart.products.reduce((accumulator, currentValue) =>
+        accumulator + currentValue.quantity, 0);
 
 const renderCart = () => {
     cart.amount = cart.products.reduce((accumulator, currentValue) =>
@@ -131,8 +137,9 @@ const renderCart = () => {
     }
 
     cart.products.forEach(element => cartProducts.append(createProductInBasketCard(element)));
+    document.querySelector('.count').innerText = getProductQuantity();
+    document.querySelector('.cart-amount').innerText = `${cart.amount} руб.`;
 };
-
 
 const addProduct = (id) => {
     const index = cart.products.findIndex(element => element.id === id); // есть ли такой продукт в корзине или нет?
@@ -179,7 +186,22 @@ const modalWindowToggle = () => {
     document.querySelector('.modal-window-background').classList.toggle('hidden');
     document.querySelector('.modal-window').classList.toggle('hidden');
 };
+
+
+//const newObj = () => {
+//  let arr = catalog.map(element => ({
+//          cat: 'meow',
+//    id: element.id
+//   }
+//    )
+//  );
+//  console.log(arr);
+// console.log(catalog);
+//};
+
+
 const eventListener = () => {
+    // newObj();
     document.addEventListener('click', (e) => {
         if (e.target['id'] !== undefined) {
             const arr = e.target['id'].split('-');
@@ -187,21 +209,28 @@ const eventListener = () => {
                 value: arr[0],
                 id: +arr[1]
             };
-
             switch (obj.value) {
                 case 'plus':
                     plusProduct(obj.id);
+                    saveToLocalStorage(cart);
                     break;
                 case 'minus':
                     minusProduct(obj.id);
+                    saveToLocalStorage(cart);
                     break;
                 case 'delete':
                     deleteProduct(obj.id);
                     renameButton(obj.id, 'delete');
+                    saveToLocalStorage(cart);
                     break;
                 case 'add':
                     addProduct(obj.id);
                     renameButton(obj.id, 'add');
+                    saveToLocalStorage(cart);
+                    break;
+                case 'deleteFromBasket':
+                    deleteProduct(obj.id);
+                    renameButton(obj.id, 'delete');
                     saveToLocalStorage(cart);
                     break;
                 case 'slider':
@@ -219,6 +248,7 @@ const eventListener = () => {
 };
 
 const run = () => {
+    createCart();
     renderCart();
     renderProducts();
     eventListener();
