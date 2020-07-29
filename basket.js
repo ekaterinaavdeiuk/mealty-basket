@@ -191,21 +191,7 @@ const modalWindowToggle = () => {
     document.querySelector('.modal-window').classList.toggle('hidden');
 };
 
-
-//const newObj = () => {
-//  let arr = catalog.map(element => ({
-//          cat: 'meow',
-//    id: element.id
-//   }
-//    )
-//  );
-//  console.log(arr);
-// console.log(catalog);
-//};
-
-
 const eventListener = () => {
-    // newObj();
     document.addEventListener('click', (e) => {
         if (e.target['id'] !== undefined) {
             const arr = e.target['id'].split('-');
